@@ -10,9 +10,11 @@ namespace Online_MMORPG
 {
     class Program
     {
-        static List<NetworkStream> messages = new List<NetworkStream>();
+        //move so it's not static
+        static List<NetworkStream> streams = new List<NetworkStream>();
         static void Main(string[] args)
         {
+            //establish connection
             Console.WriteLine("type port");
             string portString = Console.ReadLine();
             bool success = int.TryParse(portString, out int port);
@@ -38,7 +40,7 @@ namespace Online_MMORPG
             String data = null;
             NetworkStream stream = client.GetStream();
 
-            messages.Add(stream);
+            streams.Add(stream);
             while (true)
             {
                 int i = 1;
@@ -49,13 +51,12 @@ namespace Online_MMORPG
                         i = stream.Read(bytes, 0, bytes.Length);
                         data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
                         Console.WriteLine("Data: " + data);
-                        string response = data;
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(response);
+                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(data.ToString());
                         Loop(msg);
                     }
                     catch (Exception)
                     {
-                        messages.Remove(stream);
+                        streams.Remove(stream);
                         stream.Close();
                         client.Close();
                     }
@@ -67,13 +68,10 @@ namespace Online_MMORPG
 
         private static void Loop(Byte[] msg)
         {
-            
-            for (int i = 0; i < messages.Count; i++)
+            for (int i = 0; i < streams.Count; i++)
             {
-                messages[i].Write(msg, 0, msg.Length);
+                streams[i].Write(msg, 0, msg.Length);
             }
-            
-            
         }
     }
 }
