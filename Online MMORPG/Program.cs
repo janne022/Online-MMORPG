@@ -11,8 +11,10 @@ namespace Online_MMORPG
 {
     class Program
     {
+        //variables used by multiple threads at the same time
         static List<NetworkStream> streams = new List<NetworkStream>();
         static readonly string[,] userCredentials = new string[,] { { "Janne","Micke" }, { "programmering","Programmering2" } };
+        //Main method just starts the main program.
         static void Main(string[] args)
         {
             Start();
@@ -44,7 +46,7 @@ namespace Online_MMORPG
             string data = "";
             string credentials = "";
             NetworkStream stream = client.GetStream();
-            //while loop for recieving message from client and then making it into an array and matching the values with an array that handles credentials. Import to note is that Client sends credentials automatic, so handling is not an issue.
+            //while loop for recieving message from client and then making it into an array and matching the values with an array that handles credentials. Important to note is that Client sends credentials automatic, so handling is not an issue.
             while (credentialsMatches == false)
             {
                 try
@@ -78,7 +80,7 @@ namespace Online_MMORPG
             {
                 streams.Add(stream);
             }
-            //
+            //this while loop uses stream.Read() to get a message from the client and uses the Loop() method to print it out
             while (true)
             {
                 int i = 1;
@@ -92,6 +94,8 @@ namespace Online_MMORPG
                         byte[] msg = System.Text.Encoding.UTF8.GetBytes(data.ToString());
                         Loop(msg);
                     }
+                    //if the client closes the connection, the server will remove the stream from the streams list and try to end any connection
+                    //and close down this thread.
                     catch (Exception)
                     {
                         lock (streams)
@@ -105,9 +109,13 @@ namespace Online_MMORPG
             }
 
         }
-
+        //This method is responsible for sending anything from one client, to all clients.
         private static void Loop(Byte[] msg)
         {
+            /*the lock is used because there are several threads using the list streams at the same time and we want only one thread to use the 
+             * list. This is because if several threads uses the list it can become several errors.
+             * The for loop sends any message recieved from one client to all the clients. This makes sure every client can get eachothers messages
+             */
             lock (streams)
             {
                 for (int i = 0; i < streams.Count; i++)
