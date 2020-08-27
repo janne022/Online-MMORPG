@@ -13,7 +13,7 @@ namespace Online_MMORPG
     {
         //variables used by multiple threads at the same time
         static List<NetworkStream> streams = new List<NetworkStream>();
-        static readonly string[,] userCredentials = new string[,] { { "Janne","Micke" }, { "programmering","Programmering2" } };
+        static readonly string[,] userCredentials = new string[,] { { "Janne","Micke","Sang" }, { "programmering","Programmering2","ris123" } };
         //Main method just starts the main program.
         static void Main(string[] args)
         {
