@@ -6,6 +6,9 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Xml.Serialization;
+using System.Collections;
 
 namespace Online_MMORPG
 {
@@ -13,7 +16,7 @@ namespace Online_MMORPG
     {
         //variables used by multiple threads at the same time
         static List<NetworkStream> streams = new List<NetworkStream>();
-        static readonly string[,] userCredentials = new string[,] { { "Janne","Micke","Sang" }, { "programmering","Programmering2","ris123" } };
+        static readonly string[,] userCredentials = new string[,] { { "Janne","User"}, { "programmering","password" } };
         //Main method just starts the main program.
         static void Main(string[] args)
         {
@@ -21,6 +24,20 @@ namespace Online_MMORPG
         }
         private static void Start()
         {
+            List<Role> roles = new List<Role>();
+            List<Message> messages = new List<Message>();
+            Thread timeTick = new Thread(() => BackgroundTick(roles,messages));
+            timeTick.Start();
+            try
+            {
+                roles = LoadInstances(roles, new XmlSerializer(typeof(List<Role>)));
+                messages = LoadInstances(messages, new XmlSerializer(typeof(List<Message>)));
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Could not find file!");
+            }
+            
             //Ask for port and then takes local ip, then uses TCPListener to start listening for ports
             Console.WriteLine("type port");
             string portString = Console.ReadLine();
@@ -40,6 +57,7 @@ namespace Online_MMORPG
         }
         private static void SendAndRecieve(object obj)
         {
+            List<Message> messages = new List<Message>();
             bool credentialsMatches = false;
             var client = (TcpClient)obj;
             Byte[] bytes = new Byte[256];
@@ -59,8 +77,9 @@ namespace Online_MMORPG
                     {
                         if (userCredentials[0, i].Contains(credentialsArray[0]) && userCredentials[1, i].Contains(credentialsArray[1]))
                         {
+                            byte[] credentialsMatch = Encoding.UTF8.GetBytes("yes");
                             Console.WriteLine("Credentials matches!");
-
+                            stream.Write(credentialsMatch, 0, credentialsMatch.Length);
                             credentialsMatches = true;
                         }
                     }
@@ -90,9 +109,14 @@ namespace Online_MMORPG
                     {
                         i = stream.Read(bytes, 0, bytes.Length);
                         data = System.Text.Encoding.UTF8.GetString(bytes, 0, i);
-                        Console.WriteLine("Messages: " + data);
-                        byte[] msg = System.Text.Encoding.UTF8.GetBytes(data.ToString());
-                        Loop(msg);
+                        messages.Add(JsonConvert.DeserializeObject<Message>(data));
+                        Console.WriteLine(messages[messages.Count - 1].header.ToUpper());
+                        if (messages[messages.Count -1].header.ToUpper() == "MESSAGE")
+                        {
+                            Console.WriteLine("Message: " + data);
+                            byte[] msg = System.Text.Encoding.UTF8.GetBytes(data);
+                            Loop(msg);
+                        }
                     }
                     //if the client closes the connection, the server will remove the stream from the streams list and try to end any connection
                     //and close down this thread.
@@ -123,6 +147,32 @@ namespace Online_MMORPG
                     streams[i].Write(msg, 0, msg.Length);
                 }
             }
+        }
+
+        private static void BackgroundTick(List<Role> rolesList, List<Message> messages)
+        {
+            while (true)
+            {
+                Thread.Sleep(4000);
+                SaveInstances(rolesList, new XmlSerializer(typeof(List<Role>)));
+                SaveInstances(messages, new XmlSerializer(typeof(List<Message>)));
+            }
+        }
+
+        private static void SaveInstances<T>(List<T> genericList, XmlSerializer serializer)
+        {
+            //filestream closes safely with using statement. Open or creates file and serializes the list inputed in parameter.
+            using (FileStream serverFile = File.Open(genericList.GetType() + ".xml", FileMode.OpenOrCreate))
+            {
+                serializer.Serialize(serverFile, genericList);
+            }
+        }
+
+        private static List<T> LoadInstances<T>(List<T> genericList, XmlSerializer serializer)
+        {
+            //filestream closes with using statement. Opens file, deserialize it to List with tamagochis and returns it.
+            using FileStream serverStream = File.OpenRead(genericList.GetType().Namespace + ".xml");
+            return (List<T>)serializer.Deserialize(serverStream);
         }
     }
 }
