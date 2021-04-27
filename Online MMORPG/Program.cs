@@ -65,24 +65,28 @@ namespace Online_MMORPG
             string credentials = "";
             NetworkStream stream = client.GetStream();
             //while loop for recieving message from client and then making it into an array and matching the values with an array that handles credentials. Important to note is that Client sends credentials automatic, so handling is not an issue.
-            while (credentialsMatches == false)
+            Console.WriteLine("WAAAAG");
+            while (true)
             {
                 try
                 {
                     int messageLength = stream.Read(bytes, 0, bytes.Length);
                     credentials = System.Text.Encoding.UTF8.GetString(bytes, 0, messageLength);
-                    Console.WriteLine(credentials);
-                    string[] credentialsArray = credentials.Split(',');
+                    Message newMessage = JsonConvert.DeserializeObject<Message>(credentials);
+                    string[] credentialsArray = newMessage.messageText.Split(',');
                     for (int i = 0; i < userCredentials.GetLength(1); i++)
                     {
+                        Console.WriteLine("Credentials does nto matches!");
                         if (userCredentials[0, i].Contains(credentialsArray[0]) && userCredentials[1, i].Contains(credentialsArray[1]))
                         {
+                            //write as JSON format
                             byte[] credentialsMatch = Encoding.UTF8.GetBytes("yes");
                             Console.WriteLine("Credentials matches!");
                             stream.Write(credentialsMatch, 0, credentialsMatch.Length);
-                            credentialsMatches = true;
+                            break;
                         }
                     }
+                    break;
                 }
                 //catch works for shutting this client connection off and removing it from the list of different network streams if anything were to go wrong (the client probably closed the connection before telling anyone)
                 catch (Exception)
@@ -110,7 +114,6 @@ namespace Online_MMORPG
                         i = stream.Read(bytes, 0, bytes.Length);
                         data = System.Text.Encoding.UTF8.GetString(bytes, 0, i);
                         messages.Add(JsonConvert.DeserializeObject<Message>(data));
-                        Console.WriteLine(messages[messages.Count - 1].header.ToUpper());
                         if (messages[messages.Count -1].header.ToUpper() == "MESSAGE")
                         {
                             Console.WriteLine("Message: " + data);
@@ -142,8 +145,10 @@ namespace Online_MMORPG
              */
             lock (streams)
             {
+                Console.WriteLine("yo");
                 for (int i = 0; i < streams.Count; i++)
                 {
+                    Console.WriteLine("tja");
                     streams[i].Write(msg, 0, msg.Length);
                 }
             }
