@@ -8,6 +8,7 @@ namespace Online_MMORPG
     {
         //uuid should be assigned by server and set for every message
         public string header;
+        public int length;
         public string uuid;
         public string messageText = "";
         public string image = "";

@@ -60,37 +60,47 @@ namespace Online_MMORPG
             List<Message> messages = new List<Message>();
             bool credentialsMatches = false;
             var client = (TcpClient)obj;
-            Byte[] bytes = new Byte[256];
+            byte[] bytes = new byte[256];
             string data = "";
             string credentials = "";
             NetworkStream stream = client.GetStream();
             //while loop for recieving message from client and then making it into an array and matching the values with an array that handles credentials. Important to note is that Client sends credentials automatic, so handling is not an issue.
-            Console.WriteLine("WAAAAG");
-            while (true)
+            while (credentialsMatches == false)
             {
                 try
                 {
                     int messageLength = stream.Read(bytes, 0, bytes.Length);
                     credentials = System.Text.Encoding.UTF8.GetString(bytes, 0, messageLength);
                     Message newMessage = JsonConvert.DeserializeObject<Message>(credentials);
-                    string[] credentialsArray = newMessage.messageText.Split(',');
-                    for (int i = 0; i < userCredentials.GetLength(1); i++)
+                    System.Console.WriteLine(newMessage.header);
+                    if (newMessage.header == "LOGIN")
                     {
-                        Console.WriteLine("Credentials does nto matches!");
-                        if (userCredentials[0, i].Contains(credentialsArray[0]) && userCredentials[1, i].Contains(credentialsArray[1]))
+                        string[] credentialsArray = newMessage.messageText.Split(',');
+                        Console.WriteLine("1");
+                        for (int i = 0; i < userCredentials.GetLength(1); i++)
                         {
-                            //write as JSON format
-                            byte[] credentialsMatch = Encoding.UTF8.GetBytes("yes");
-                            Console.WriteLine("Credentials matches!");
-                            stream.Write(credentialsMatch, 0, credentialsMatch.Length);
-                            break;
+                            Console.WriteLine("2");
+                            if (userCredentials[0, i].Contains(credentialsArray[0]) && userCredentials[1, i].Contains(credentialsArray[1]))
+                            {
+                                Console.WriteLine("3");
+                                //write as JSON format
+                                Message credentialMessage = new Message(){header = "MESSAGE", messageText = "yes"};
+                                byte[] credentialsMatch = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(credentialMessage));
+                                Console.WriteLine("Credentials matches!");
+                                stream.Write(credentialsMatch, 0, credentialsMatch.Length);
+                                Console.WriteLine("4");
+                                credentialsMatches = true;
+                                break;
+                            }
                         }
+                        Console.WriteLine("5");
+                        break;
                     }
-                    break;
                 }
                 //catch works for shutting this client connection off and removing it from the list of different network streams if anything were to go wrong (the client probably closed the connection before telling anyone)
                 catch (Exception)
                 {
+                    System.Console.WriteLine("ERROR ON LOGIN");
                     lock (streams)
                     {
                         streams.Remove(stream);
@@ -109,10 +119,11 @@ namespace Online_MMORPG
                 int i = 1;
                 while (i != 0)
                 {
-                    try
-                    {
+                    //FIX: ADD TRY-CATCH AGAIN
+                    
                         i = stream.Read(bytes, 0, bytes.Length);
                         data = System.Text.Encoding.UTF8.GetString(bytes, 0, i);
+                        System.Console.WriteLine(data);
                         messages.Add(JsonConvert.DeserializeObject<Message>(data));
                         if (messages[messages.Count -1].header.ToUpper() == "MESSAGE")
                         {
@@ -120,18 +131,15 @@ namespace Online_MMORPG
                             byte[] msg = System.Text.Encoding.UTF8.GetBytes(data);
                             Loop(msg);
                         }
-                    }
+                        else if (messages[messages.Count -1].header.ToUpper() == "MESSAGELENGTH")
+                        {
+                            System.Console.WriteLine("Changing byte length");
+                            bytes = new byte[messages[messages.Count - 1].length];
+                        }
+                    
                     //if the client closes the connection, the server will remove the stream from the streams list and try to end any connection
                     //and close down this thread.
-                    catch (Exception)
-                    {
-                        lock (streams)
-                        {
-                            streams.Remove(stream);
-                        }
-                        client.Close();
-                        return;
-                    }
+                    
                 }
             }
 
