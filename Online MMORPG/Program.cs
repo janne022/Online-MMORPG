@@ -76,24 +76,19 @@ namespace Online_MMORPG
                     if (newMessage.header == "LOGIN")
                     {
                         string[] credentialsArray = newMessage.messageText.Split(',');
-                        Console.WriteLine("1");
                         for (int i = 0; i < userCredentials.GetLength(1); i++)
                         {
-                            Console.WriteLine("2");
                             if (userCredentials[0, i].Contains(credentialsArray[0]) && userCredentials[1, i].Contains(credentialsArray[1]))
                             {
-                                Console.WriteLine("3");
                                 //write as JSON format
                                 Message credentialMessage = new Message(){header = "MESSAGE", messageText = "yes"};
                                 byte[] credentialsMatch = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(credentialMessage));
                                 Console.WriteLine("Credentials matches!");
                                 stream.Write(credentialsMatch, 0, credentialsMatch.Length);
-                                Console.WriteLine("4");
                                 credentialsMatches = true;
                                 break;
                             }
                         }
-                        Console.WriteLine("5");
                         break;
                     }
                 }
@@ -120,15 +115,21 @@ namespace Online_MMORPG
                 while (i != 0)
                 {
                     //FIX: ADD TRY-CATCH AGAIN
-                    
+                    try
+                    {
                         i = stream.Read(bytes, 0, bytes.Length);
                         data = System.Text.Encoding.UTF8.GetString(bytes, 0, i);
                         System.Console.WriteLine(data);
                         messages.Add(JsonConvert.DeserializeObject<Message>(data));
+                        Message messageLength = new Message();
+                        messageLength.header = "MESSAGELENGTH";
+                        messageLength.length = i;
                         if (messages[messages.Count -1].header.ToUpper() == "MESSAGE")
                         {
                             Console.WriteLine("Message: " + data);
                             byte[] msg = System.Text.Encoding.UTF8.GetBytes(data);
+                            byte[] msgLength = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(messageLength));
+                            Loop(msgLength);
                             Loop(msg);
                         }
                         else if (messages[messages.Count -1].header.ToUpper() == "MESSAGELENGTH")
@@ -139,7 +140,17 @@ namespace Online_MMORPG
                     
                     //if the client closes the connection, the server will remove the stream from the streams list and try to end any connection
                     //and close down this thread.
-                    
+                    }
+                    catch (Exception)
+                    {
+                        System.Console.WriteLine("ERROR ON READING MESSAGE");
+                        lock (streams)
+                        {
+                            streams.Remove(stream);
+                        }
+                        client.Close();
+                        return;
+                    }
                 }
             }
 
