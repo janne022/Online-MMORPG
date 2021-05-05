@@ -114,7 +114,6 @@ namespace Online_MMORPG
                 int i = 1;
                 while (i != 0)
                 {
-                    //FIX: ADD TRY-CATCH AGAIN
                     try
                     {
                         i = stream.Read(bytes, 0, bytes.Length);
@@ -135,7 +134,7 @@ namespace Online_MMORPG
                         else if (messages[messages.Count -1].header.ToUpper() == "MESSAGELENGTH")
                         {
                             System.Console.WriteLine("Changing byte length");
-                            bytes = new byte[messages[messages.Count - 1].length];
+                            bytes = new byte[messages[messages.Count - 1].length + 256];
                         }
                     
                     //if the client closes the connection, the server will remove the stream from the streams list and try to end any connection
