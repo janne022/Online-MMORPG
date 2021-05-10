@@ -116,6 +116,7 @@ namespace Online_MMORPG
                 {
                     try
                     {
+                        //TODO: Match uuid with username and send back message with String name
                         i = stream.Read(bytes, 0, bytes.Length);
                         data = System.Text.Encoding.UTF8.GetString(bytes, 0, i);
                         System.Console.WriteLine(data);

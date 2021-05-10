@@ -278,29 +278,34 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\elev\\.nuget\\packages\\": {}
+    "C:\\Users\\johannes.flodin\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\elev\\Documents\\GitHub\\Online-MMORPG\\Online MMORPG\\Online MMORPG.csproj",
+      "projectUniqueName": "C:\\Users\\johannes.flodin\\Documents\\Online-MMORPG\\Online MMORPG\\Online MMORPG.csproj",
       "projectName": "Online MMORPG",
-      "projectPath": "c:\\Users\\elev\\Documents\\GitHub\\Online-MMORPG\\Online MMORPG\\Online MMORPG.csproj",
-      "packagesPath": "C:\\Users\\elev\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\elev\\Documents\\GitHub\\Online-MMORPG\\Online MMORPG\\obj\\",
+      "projectPath": "C:\\Users\\johannes.flodin\\Documents\\Online-MMORPG\\Online MMORPG\\Online MMORPG.csproj",
+      "packagesPath": "C:\\Users\\johannes.flodin\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\johannes.flodin\\Documents\\Online-MMORPG\\Online MMORPG\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
-        "C:\\Users\\elev\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\johannes.flodin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp3.0": {
-          "targetAlias": "netcoreapp3.0",
           "projectReferences": {}
         }
       },
@@ -312,7 +317,6 @@
     },
     "frameworks": {
       "netcoreapp3.0": {
-        "targetAlias": "netcoreapp3.0",
         "dependencies": {
           "Newtonsoft.Json": {
             "target": "Package",
@@ -356,7 +360,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.408\\RuntimeIdentifierGraph.json"
       }
     }
   }

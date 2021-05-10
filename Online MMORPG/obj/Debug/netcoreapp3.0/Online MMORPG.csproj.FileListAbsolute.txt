@@ -13,3 +13,18 @@ C:\Users\elev\Documents\GitHub\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3
 C:\Users\elev\Documents\GitHub\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.dll
 C:\Users\elev\Documents\GitHub\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.pdb
 C:\Users\elev\Documents\GitHub\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.genruntimeconfig.cache
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\bin\Debug\netcoreapp3.0\Online MMORPG.exe
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\bin\Debug\netcoreapp3.0\Online MMORPG.deps.json
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\bin\Debug\netcoreapp3.0\Online MMORPG.runtimeconfig.json
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\bin\Debug\netcoreapp3.0\Online MMORPG.runtimeconfig.dev.json
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\bin\Debug\netcoreapp3.0\Online MMORPG.dll
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\bin\Debug\netcoreapp3.0\Online MMORPG.pdb
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\bin\Debug\netcoreapp3.0\Newtonsoft.Json.dll
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.csprojAssemblyReference.cache
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.AssemblyInfoInputs.cache
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.AssemblyInfo.cs
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.csproj.CoreCompileInputs.cache
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.csproj.CopyComplete
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.dll
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.pdb
+C:\Users\johannes.flodin\Documents\Online-MMORPG\Online MMORPG\obj\Debug\netcoreapp3.0\Online MMORPG.genruntimeconfig.cache

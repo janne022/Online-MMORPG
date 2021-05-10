@@ -10,6 +10,7 @@ namespace Online_MMORPG
         public string header;
         public int length;
         public string uuid;
+        public string name;
         public string messageText = "";
         public string image = "";
         public string color;
