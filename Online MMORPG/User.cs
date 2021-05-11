@@ -4,22 +4,28 @@ using System.Text;
 
 namespace Online_MMORPG
 {
-    public abstract class Role
+    class User
     {
-        public int hierarchyLevel;
-        public string roleName;
-        public string color;
-        public bool canBan = false;
-    }
+        NewUser role;
+        private string username;
+        private string password;
 
-    public class Owner : Role
-    {
-        public Owner()
+        public string Username
         {
-            hierarchyLevel = 4;
-            roleName = "Owner";
-            canBan = true;
+            get { return username; }
+            set { username = value; }
+        }
+        public string Password
+        {
+            get { return password; }
+            set { password = value; }
         }
     }
 
+    class OwnerUser
+    {
+        OwnerRole role;
+        private string username;
+        private string password;
+    }
 }
