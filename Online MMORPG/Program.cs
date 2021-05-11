@@ -21,7 +21,8 @@ namespace Online_MMORPG
         static string arguments;
         static Dictionary<string, Action> commands = new System.Collections.Generic.Dictionary<string, Action>()
         {
-            {"!ping",() => Ping(arguments)}
+            {"!ping",() => Ping(arguments)},
+            {"!help",() => Help(arguments)}
         };
         //Main method just starts the main program.
         static void Main(string[] args)
@@ -103,7 +104,7 @@ namespace Online_MMORPG
                             }
                         }
                     }
-                    else if (newMessage.header == "MESSAGE")
+                    else if (newMessage.header == "MESSAGE" && credentialsMatches == true)
                     {
                         //TODO: Match uuid with username and send back message with String name
                         messages.Add(newMessage);
@@ -120,7 +121,7 @@ namespace Online_MMORPG
                             Loop(msg);
                         }
                     }
-                    else if (newMessage.header == "COMMAND")
+                    else if (newMessage.header == "COMMAND" && credentialsMatches == true)
                     {
                         string[] commandInput = newMessage.messageText.Split(" ");
                         try
@@ -196,11 +197,28 @@ namespace Online_MMORPG
         }
         private static void Ping(string arguments)
         {
-            Console.WriteLine("PING!");
             Message pingMessage = new Message();
             Message newLength = new Message();
             pingMessage.header = "MESSAGE";
             pingMessage.messageText = "Pong!";
+            pingMessage.name = "Server";
+            newLength.length = Encoding.UTF8.GetByteCount(JsonConvert.SerializeObject(newLength));
+            byte[] messageLength = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(newLength));
+            byte[] message = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(pingMessage));
+            Loop(messageLength);
+            Loop(message);
+        }
+        private static void Help(string arguments)
+        {
+            string commandList = "";
+            foreach (string item in commands.Keys)
+            {
+                commandList += item + " , ";
+            }
+            Message pingMessage = new Message();
+            Message newLength = new Message();
+            pingMessage.header = "MESSAGE";
+            pingMessage.messageText = commandList;
             pingMessage.name = "Server";
             newLength.length = Encoding.UTF8.GetByteCount(JsonConvert.SerializeObject(newLength));
             byte[] messageLength = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(newLength));
