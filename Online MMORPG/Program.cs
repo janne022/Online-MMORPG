@@ -125,7 +125,6 @@ namespace Online_MMORPG
                         string[] commandInput = newMessage.messageText.Split(" ");
                         try
                         {
-                            Console.WriteLine("pining");
                             commands[commandInput[0]]();
                         }
                         catch (Exception)
@@ -162,10 +161,8 @@ namespace Online_MMORPG
              */
             lock (streams)
             {
-                Console.WriteLine("yo");
                 for (int i = 0; i < streams.Count; i++)
                 {
-                    Console.WriteLine("tja");
                     streams[i].Write(msg, 0, msg.Length);
 
                 }
