@@ -72,19 +72,23 @@ namespace Online_MMORPG
             byte[] bytes = new byte[1026];
             string data = "";
             NetworkStream stream = client.GetStream();
-            //while loop for recieving message from client and then making it into an array and matching the values with an array that handles credentials. Important to note is that Client sends credentials automatic, so handling is not an issue.
+            //while loop reads message and deserializes it as Message(class), then it checks the header of the message to know how to treat content
             while (true)
             {
                 try
                 {
+                    //Reads message from networkstream and deserializes it as Message class
                     int messageLength = stream.Read(bytes, 0, bytes.Length);
                     data = System.Text.Encoding.UTF8.GetString(bytes, 0, messageLength);
                     Message newMessage = JsonConvert.DeserializeObject<Message>(data);
                     System.Console.WriteLine(newMessage.header);
+                    //first message is always going to be a MESSAGELENGTH, containing int on how long byte[] should be
                     if (newMessage.header == "MESSAGELENGTH")
                     {
                         bytes = new byte[newMessage.length + 256];
                     }
+                    //Login will check if credential matches, if it does messages by Client will be recieved and sent to rest of Clients
+                    //FIX: SEND MESSAGE FOR IF LOGIN FAIL TO CLIENT
                     else if (newMessage.header == "LOGIN" && credentialsMatches == false)
                     {
                         string[] credentialsArray = newMessage.messageText.Split(',');
@@ -99,11 +103,16 @@ namespace Online_MMORPG
                                 byte[] credentialsMatch = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(credentialMessage));
                                 Console.WriteLine("Credentials matches!");
                                 stream.Write(credentialsMatch, 0, credentialsMatch.Length);
+                                lock (streams)
+                                {
+                                    streams.Add(stream);
+                                }
                                 credentialsMatches = true;
                                 break;
                             }
                         }
                     }
+                    //if user sends message, the message will be saved by the server and send to every other client
                     else if (newMessage.header == "MESSAGE" && credentialsMatches == true)
                     {
                         //TODO: Match uuid with username and send back message with String name
@@ -121,6 +130,7 @@ namespace Online_MMORPG
                             Loop(msg);
                         }
                     }
+                    //if user sends command, it will try accessing an Action in Dictionary using input key from user text
                     else if (newMessage.header == "COMMAND" && credentialsMatches == true)
                     {
                         string[] commandInput = newMessage.messageText.Split(" ");
@@ -146,12 +156,6 @@ namespace Online_MMORPG
                     return;
                 }
             }
-            lock (streams)
-            {
-                streams.Add(stream);
-            }
-            
-
         }
         //This method is responsible for sending anything from one client, to all clients.
         private static void Loop(Byte[] msg)
@@ -169,7 +173,7 @@ namespace Online_MMORPG
                 }
             }
         }
-
+        //BackggroundTick is responisble for running methods once in a while in the background. Currently only runs SaveInstances, which saves classes to xml files
         private static void BackgroundTick(List<Role> rolesList, List<Message> messages)
         {
             while (true)
@@ -179,7 +183,8 @@ namespace Online_MMORPG
                 SaveInstances(messages, new XmlSerializer(typeof(List<Message>)));
             }
         }
-
+        //Saves List to xml file
+        //POSSIBLE FIX: GetType class saved by list, for better name
         private static void SaveInstances<T>(List<T> genericList, XmlSerializer serializer)
         {
             //filestream closes safely with using statement. Open or creates file and serializes the list inputed in parameter.
@@ -188,13 +193,14 @@ namespace Online_MMORPG
                 serializer.Serialize(serverFile, genericList);
             }
         }
-
+        //Loads xml file into list and returns the list (SHOULD ONLY BE RAN ON START OF PROGRAM)
         private static List<T> LoadInstances<T>(List<T> genericList, XmlSerializer serializer)
         {
-            //filestream closes with using statement. Opens file, deserialize it to List with tamagochis and returns it.
             using FileStream serverStream = File.OpenRead(genericList.GetType().Namespace + ".xml");
             return (List<T>)serializer.Deserialize(serverStream);
         }
+        //Ping command sends "Pong!" back
+        //FIX: Move to new class for commands
         private static void Ping(string arguments)
         {
             Message pingMessage = new Message();
@@ -208,6 +214,7 @@ namespace Online_MMORPG
             Loop(messageLength);
             Loop(message);
         }
+        //Command for listing all Actions in Dictonary (listing all commands and sending them to clients)
         private static void Help(string arguments)
         {
             string commandList = "";
