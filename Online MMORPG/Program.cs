@@ -59,7 +59,6 @@ namespace Online_MMORPG
                 Console.WriteLine("waiting for connection");
                 TcpClient client = server.AcceptTcpClient();
                 ThreadPool.QueueUserWorkItem(SendAndRecieve, client);
-                streams.Add(client.GetStream());
                 Console.WriteLine("connected");
             }
         }
@@ -100,6 +99,10 @@ namespace Online_MMORPG
                                 Console.WriteLine("Credentials matches!");
                                 stream.Write(credentialsMatch, 0, credentialsMatch.Length);
                                 credentialsMatches = true;
+                                lock (streams)
+                                {
+                                    streams.Add(stream);
+                                }
                                 break;
                             }
                         }
@@ -145,10 +148,6 @@ namespace Online_MMORPG
                     client.Close();
                     return;
                 }
-            }
-            lock (streams)
-            {
-                streams.Add(stream);
             }
             
 
