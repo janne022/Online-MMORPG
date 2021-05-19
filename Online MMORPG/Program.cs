@@ -107,10 +107,6 @@ namespace Online_MMORPG
                                     streams.Add(stream);
                                 }
                                 credentialsMatches = true;
-                                lock (streams)
-                                {
-                                    streams.Add(stream);
-                                }
                                 break;
                             }
                         }
